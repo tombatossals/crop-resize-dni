@@ -1,0 +1,9 @@
+{
+  "name": "guanyemcastello.org",
+  "version": "0.0.1",
+  "dependencies": {
+    "semantic": "latest",
+    "jquery": "latest",
+    "cropper": "~0.8.0"
+  }
+}

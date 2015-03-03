@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Gestió de DNI's</title>
+    <meta name="description" content="Gestió de DNI's en Guanyem Castelló">
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- build:css styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="assets/bower_components/semantic/dist/semantic.min.css">
+    <!-- endbower -->
+    <!-- endbuild -->
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:400,700,300&subset=latin,vietnamese' rel='stylesheet' type='text/css'>
+
+    <!-- build:css styles/main.css -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <!-- endbuild -->
+</head>
+<body>
+    <div class="ui large menu navbar">
+        <div class="left menu">
+            <a href="" class="item">Gestió de DNI's</a>
+        </div>
+        <div class="right menu">
+            <a href="http://guanyemcastello.org" class="item">Guanyem Castelló</a>
+        </div>
+    </div>
+    <div class="ui grid">
+        <div class="six wide column"></div>
+        <div class="four wide column">
+            <div class="ui huge message page grid center aligned" style="margin-top: 4em;">
+                <h1 class="ui huge header">Autenticació</h1>
+      		<span class="ui teal right ribbon label">Usuari: demo, Clau: demo</span>
+		<form class="ui form" method="POST" action="login.php" style="margin-top: 1em;">
+		    <div class="required field">
+		      <div class="ui icon input">
+			<input type="text" name="username" placeholder="Usuari">
+			<i class="user icon"></i>
+		      </div>
+		    </div>
+		    <div class="required field">
+		      <div class="ui icon input">
+			<input type="password" name="password" placeholder="Clau d'accés">
+			<i class="lock icon"></i>
+		      </div>
+		    </div>
+		  <input type="submit" value="Accedir" class="possitive ui button" />
+		</form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
