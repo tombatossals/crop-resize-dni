@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Gestió de DNI's</title>
+    <meta name="description" content="Gestió de DNI's en Guanyem Castelló">
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- build:css styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="assets/bower_components/semantic/dist/semantic.min.css">
+    <link rel="stylesheet" href="assets/bower_components/cropper/dist/cropper.min.css">
+    <!-- endbower -->
+    <!-- endbuild -->
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:400,700,300&subset=latin,vietnamese' rel='stylesheet' type='text/css'>
+
+    <!-- build:css styles/main.css -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <!-- endbuild -->
+</head>
+<body>
+    <div class="ui large menu navbar">
+        <div class="left menu">
+            <a href="/dni/index.php" class="item">Gestió de DNI's</a>
+        </div>
+        <div class="right menu">
+            <a href="http://guanyemcastello.org" class="item">Guanyem Castelló</a>
+	    <div class="item">
+    	        <a href="?logout" class="ui primary button">Sortir de la sessió</a>
+	    </div>
+        </div>
+    </div>
+    <div class="ui labeled icon menu">
+        <a class="save item">
+            <i class="save icon"></i>
+            Guardar
+        </a>
+        <a class="zoomin item">
+            <i class="zoom icon"></i>
+            Ampliar
+        </a>
+        <a class="zoomout item">
+            <i class="zoom out icon"></i>
+            Reduïr
+        </a>
+        <a class="left90 item">
+            <i class="arrow left icon"></i>
+            Rotació 90 graus esquerra
+        </a>
+        <a class="right90 item">
+            <i class="arrow right icon"></i>
+            Rotació 90 graus dreta
+        </a>
+        <a class="left10 item">
+            <i class="caret left icon"></i>
+            Rotació 10 graus esquerra
+        </a>
+        <a class="right10 item">
+            <i class="caret right icon"></i>
+            Rotació 10 graus dreta
+        </a>
+    </div>
+    <div class="ui segment">
+        <img class="ui main image" src="image.php?idni={{ image.idni }}">
+    </div>
+    <script src="assets/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="assets/bower_components/cropper/dist/cropper.min.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

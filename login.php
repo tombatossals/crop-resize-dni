@@ -3,9 +3,9 @@
 // include and register Twig auto-loader
 include 'vendor/autoload.php';
 
-if ($_POST["password"] == "demo") {
+if (array_key_exists("password", $_POST) && $_POST["password"] == "demo") {
     session_start();
-    $_SESSION["idu"] = "demo";
+    $_SESSION["idu"] = 1;
     header("Location: index.php");
     exit;
 }

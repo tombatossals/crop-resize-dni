@@ -24,13 +24,7 @@ $db->query('SELECT * FROM dnis where dnis.frm=:idu');
 $db->bind(':idu', $idu);
 $db->execute();
 
-$rows = $db->resultset();
-
-$images = array();
-
-foreach ($rows as $image) {
-    $images[] = $image['idni'];
-}
+$image = $db->single();
 
 // include and register Twig auto-loader
 include 'vendor/autoload.php';
@@ -45,12 +39,12 @@ try {
   $twig = new Twig_Environment($loader);
   
   // load template
-  $template = $twig->loadTemplate('front.tmpl');
+  $template = $twig->loadTemplate('crop.tmpl');
   
   // set template variables
   // render template
   echo $template->render(array(
-    'images' => $images
+    'image' => $image
   ));
   
 } catch (Exception $e) {
