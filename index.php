@@ -24,13 +24,7 @@ $db->query('SELECT * FROM dnis where dnis.frm=:idu');
 $db->bind(':idu', $idu);
 $db->execute();
 
-$rows = $db->resultset();
-
-$images = array();
-
-foreach ($rows as $image) {
-    $images[] = $image['idni'];
-}
+$images = $db->resultset();
 
 // include and register Twig auto-loader
 include 'vendor/autoload.php';

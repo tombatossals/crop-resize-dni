@@ -48,12 +48,28 @@ class Database {
         $this->stmt = $this->db->prepare($query);
     }
 
-    public function updateDni($idu, $idni, $img) {
-        $img = base64_decode($img);
-        $this->stmt = $this->db->prepare("UPDATE dnis SET img=':img' WHERE idni=:idni and frm=:frm");
+    public function updateDni($idu, $idni, $img, $ndni) {
+	$img = str_replace("data:image/jpeg;base64,", "", $img);
+        $img = base64_decode($img, true);
+        list($width, $height) = getimagesizefromstring($img);
+        if ($width < 1024) {
+	    $i = imagecreatefromstring($img);
+	    $i2 = imagescale($i, 1024);
+            ob_start();
+            imagejpeg($i2);
+            $img = ob_get_contents();
+	    ob_end_clean(); 
+        }
+
+        if ($img) {
+        	$this->stmt = $this->db->prepare("UPDATE dnis SET img=:img, ndni=:ndni WHERE idni=:idni and frm=:frm");
+                $this->bind(":img", $img);
+        } else {
+        	$this->stmt = $this->db->prepare("UPDATE dnis SET ndni=:ndni WHERE idni=:idni and frm=:frm");
+        }
         $this->bind(":frm", $idu);
         $this->bind(":idni", $idni);
-        $this->bind(":img", $img);
+        $this->bind(":ndni", $ndni);
         $this->execute();
     }
 

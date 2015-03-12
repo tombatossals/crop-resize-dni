@@ -31,41 +31,101 @@
 	    </div>
         </div>
     </div>
-    <div class="ui labeled icon menu">
-        <a class="save item">
-            <i class="save icon"></i>
-            Guardar
-        </a>
-        <a class="zoomin item">
-            <i class="zoom icon"></i>
-            Ampliar
-        </a>
-        <a class="zoomout item">
-            <i class="zoom out icon"></i>
-            Reduïr
-        </a>
-        <a class="left90 item">
-            <i class="arrow left icon"></i>
-            Rotació 90 graus esquerra
-        </a>
-        <a class="right90 item">
-            <i class="arrow right icon"></i>
-            Rotació 90 graus dreta
-        </a>
-        <a class="left10 item">
-            <i class="caret left icon"></i>
-            Rotació 10 graus esquerra
-        </a>
-        <a class="right10 item">
-            <i class="caret right icon"></i>
-            Rotació 10 graus dreta
-        </a>
+    <div class="ui grid segment">
+        <div class="one wide column">
+	    <div class="ui vertical labeled icon menu">
+	        <a class="zoomin item">
+	            <i class="zoom icon"></i>
+	            Ampliar
+	        </a>
+	        <a class="zoomout item">
+	            <i class="zoom out icon"></i>
+	            Reduir
+	        </a>
+		<a class="left90 item">
+		    <i class="arrow left icon"></i>
+		    -90 graus
+		</a>
+		<a class="right90 item">
+		    <i class="arrow right icon"></i>
+		    90 graus
+		</a>
+		<a class="left5 item">
+		    <i class="caret left icon"></i>
+		    -5 graus
+		</a>
+		<a class="right5 item">
+		    <i class="caret right icon"></i>
+		    5 graus
+                </a>
+		<a class="cancel item" href="index.php">
+		    <i class="cancel icon"></i>
+		    Sortir
+		</a>
+	    </div>
+        </div> 
+        <div class="six wide column">
+            <div class="ui segment" style="margin-left: 1em;">
+                <img class="ui main image" src="image.php?idni={{ image.idni }}">
+            </div>
+        </div>
+        <div class="four wide column">
+            <div class="ui segment">
+		    <div class="ui form">
+			    <div class="ui field">
+				<label>Introdueïx el nombre i lletra del DNI de la imatge</label>
+				<div class="ui icon input">
+				    <input type="text" id="ndni" name="ndni" value="{{ image.ndni }}" placeholder="Introdueïx el nombre de DNI que veus a la imatge">
+				</div>
+			    </div>
+			    <div class="ui field">
+				<label>&nbsp;</label>
+				<a class="ui primary button save-dni">
+				    <i class="save icon"></i>
+				    Guardar DNI
+				</a>
+			    </div>
+			</div>
+            </div>
+        </div>
+        <div class="four wide column">
+            <div class="ui segment">
+		    <h4 style="margin-top: 0;">Previsualitzacio</h4>
+		    <div class="preview">
+			<img class="ui small image" src="image.php?idni={{ image.idni }}">
+		    </div>
+		    <h4 id="dimensions"></h4>
+		    <a class="ui primary button save">
+			<i class="save icon"></i>
+			Guardar imatge de DNI retallada
+		    </a>
+	    </div>
+        </div>
     </div>
-    <div class="ui segment">
-        <img class="ui main image" src="image.php?idni={{ image.idni }}">
+
+<div class="ui modal transition" style="margin-top: -250px;">
+    <i class="close icon"></i>
+    <div class="header">
+      Estas segur de retallar aquest DNI?
     </div>
+    <div class="content">
+      <img class="ui image preview2" src="image.php?idni={{ image.idni }}">
+      <h4 class="ndni-modal">189912</h4>
+    </div>
+    <div class="actions">
+      <div class="ui black button cancel">
+        No, guaita
+      </div>
+      <div class="ui positive right labeled icon button save2">
+        Si, vinga
+        <i class="checkmark icon"></i>
+      </div>
+    </div>
+  </div>
+
     <script src="assets/bower_components/jquery/dist/jquery.min.js"></script>
     <script src="assets/bower_components/cropper/dist/cropper.min.js"></script>
+    <script src="assets/bower_components/semantic/dist/semantic.min.js"></script>
     <script src="assets/js/main.js"></script>
 </body>
 </html>

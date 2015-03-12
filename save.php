@@ -26,6 +26,7 @@ if (isset($_GET['del'])) {
 }
 
 $idni = intval($_POST['idni']);
-$db->updateDni($idu, $idni, $_POST['img']);
+$ndni = $_POST['ndni'];
+$db->updateDni($idu, $idni, $_POST['img'], $ndni);
 header("Content-Type: application/json");
 echo json_encode(array("success" => true));

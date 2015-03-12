@@ -20,8 +20,11 @@ require "database.php";
 $db = new Database();
 
 
-$db->query('SELECT * FROM dnis where dnis.frm=:idu');
+$idni = intval($_GET['idni']);
+
+$db->query('SELECT * FROM dnis where dnis.frm=:idu and dnis.idni=:idni');
 $db->bind(':idu', $idu);
+$db->bind(':idni', $idni);
 $db->execute();
 
 $image = $db->single();

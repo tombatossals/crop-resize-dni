@@ -47,11 +47,17 @@
             <div class="column">
                 <div class="ui fluid card">
                     <div class="ui image">
-                        <a href="crop.php?idni={{ image }}"><img class="ui image" src="image.php?idni={{ image }}"></a>
+                        <a href="crop.php?idni={{ image.idni }}"><img class="ui image" src="image.php?idni={{ image.idni }}"></a>
                     </div>
+                    {% if image.ndni %}
                     <div class="content">
-                        <a href="save.php?idni={{ image }}&del=true" onclick="return confirm('Estàs segur/a?');">borra</a>
+			<strong style="font-size: 1.4em;">{{ image.ndni }}</strong>
                     </div>
+                    {% endif %}
+                    <a class="ui bottom attached button" href="save.php?idni={{ image.idni }}&del=true" onclick="return confirm('Estàs segur/a?');">
+                        <i class="delete icon"></i>
+                        Esborrar DNI
+                    </a>
                 </div>
             </div>
             {% endfor %}
