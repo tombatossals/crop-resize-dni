@@ -1,5 +1,62 @@
 $(function() {
+      var idni;
+      var page;
+      $('a.page').click(function() {
+	 idni = $(this).attr('name');
+	 page = $(this).attr('page');
+         $('.modal.page').modal('show');
+         return false;
+      });
 
+
+        $('.ui.button.set-pagina').on('click', function() {
+			    var pagina = 0;
+			    if ($(this).html() > 0) {
+				pagina = $(this).html()
+			    }
+			    $.ajax({
+			      type: 'POST',
+			      url: 'save.php',
+			      data: {
+				  idni: idni,
+				  pagina: pagina
+			      },
+			      complete: function() {
+				$('.modal.page').modal('hide');
+				window.location.reload();
+			      }
+			    });
+        });
+
+        $('.ui.button.cara').on('click', function() {
+		$(this).addClass('active');
+		if ($(this).attr("name") === "frontal") {
+        		$('.ui.button.cara[name="reverso"]').removeClass("active");
+			
+			    $.ajax({
+			      type: 'POST',
+			      url: 'save.php',
+			      data: {
+				  idni: $.QueryString['idni'],
+          			  ndni: $("#ndni").val(),
+				  cara: 0
+			      }
+			    });
+			
+		} else {
+        		$('.ui.button.cara[name="frontal"]').removeClass("active");
+
+			    $.ajax({
+			      type: 'POST',
+			      url: 'save.php',
+			      data: {
+				  idni: $.QueryString['idni'],
+          			  ndni: $("#ndni").val(),
+				  cara: 1
+			      }
+			    });
+		}
+	});
 
 	function check_dni(dni)
 	{
@@ -91,11 +148,14 @@ $(function() {
   });
 
   $('.save').click(function() {
-      $('.modal').modal('show');
+      $('.modal.crop').modal('show');
       var img = $('.ui.main.image').cropper('getDataURL', 'image/jpeg');
       $('.preview2').attr('src', img);
       $('.ndni-modal').html($("#ndni").val());
   }); 
+
+
+  $cara = $('.ui.button.cara[name="reverso"]').hasClass("active") && 1 || 0;
 
   $('.save-dni').click(function() {
     var dni = $("#ndni").val();
@@ -105,6 +165,7 @@ $(function() {
 	      url: 'save.php',
 	      data: {
 		  idni: $.QueryString['idni'],
+	          cara: $cara,
 		  ndni: $("#ndni").val()
 	      },
 	      complete: function(data) { 
@@ -133,6 +194,7 @@ $(function() {
       data: {
           idni: $.QueryString['idni'],
           ndni: $("#ndni").val(),
+	  cara: $cara,
           img: img
       },
       complete: function(data) { 

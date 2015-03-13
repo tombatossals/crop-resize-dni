@@ -22,7 +22,7 @@
 <body>
     <div class="ui large menu navbar">
         <div class="left menu">
-            <a href="/dni/index.php" class="item">Gestió de DNI's</a>
+            <a href="/dnis/index.php" class="item">Gestió de DNI's</a>
         </div>
         <div class="right menu">
             <a href="http://guanyemcastello.org" class="item">Guanyem Castelló</a>
@@ -85,8 +85,14 @@
 				    Guardar DNI
 				</a>
 			    </div>
-			</div>
+		    </div>
             </div>
+
+<div class="ui buttons">
+  <div class="ui button cara{% if image.cara == 0 %} active{% endif %} " name="frontal">Frontal</div>
+  <div class="ui button cara{% if image.cara == 1 %} active{% endif %}" name="reverso">Reverso</div>
+</div>
+
         </div>
         <div class="four wide column">
             <div class="ui segment">
@@ -103,7 +109,7 @@
         </div>
     </div>
 
-<div class="ui modal transition" style="margin-top: -250px;">
+<div class="ui modal crop transition" style="margin-top: -250px;">
     <i class="close icon"></i>
     <div class="header">
       Estas segur de retallar aquest DNI?

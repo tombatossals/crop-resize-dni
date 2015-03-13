@@ -30,19 +30,33 @@
 	    </div>
         </div>
     </div>
-    <h2>Pujada de documents</h2>
     <div class="ui segment">
-        <form class="ui form" method="POST" action="save.php" enctype="multipart/form-data">
-	    <div class="field">
-	        <label>Trïa el arxiu del teu disc dur</label>
-	        <input type="file" name="img" />
-            </div>
-	    <input type="submit" class="ui primary button" value="Pujar document" />
-        </form>
+        <h4>Sel.lecciona la fulla de DNI's que vols visualitzar</h4>
+        <div class="ui buttons">
+            {% for key,p in paginas %}
+            <a class="ui big button{% if pagina == key %} active{% endif %}" href="index.php?pagina={{ key }}">
+		{% if key == 0 %}
+		Sense fulla assignada
+                {% else %}
+		Fulla {{ key }}
+		{% endif %}
+	        {% if p > 0 %}
+			<div class="ui small teal label" style="margin-left: 1em;">{{ p }} dnis</div>
+		{% else %}
+			<div class="ui small teal label" style="margin-left: 1em;">cap</div>
+		{% endif %}
+	    </a>
+            {% endfor %}
+        </div>
     </div>
-    <h2>Fes click en una imatge per gestionar-la</h2>
+
+    <h2>{% if pagina > 0 %}Fulla {{ pagina }}. {% endif %}Fes click en una imatge per gestionar-la</h2>
+    {% if pagina > 0 %}<div class="ui title"><a href="pdf.php?pagina={{ pagina }}"><i class="file pdf outline icon"></i> Impressió de la fulla</a></div>{% endif %}
     <div class="ui segment">
         <div class="ui four column grid">
+	    {% if images|length == 0 %}
+		<h3 class="ui title">No n'hi han dni's a aquesta fulla.</h3>
+	    {% endif %}
             {% for image in images %}
             <div class="column">
                 <div class="ui fluid card">
@@ -54,14 +68,63 @@
 			<strong style="font-size: 1.4em;">{{ image.ndni }}</strong>
                     </div>
                     {% endif %}
-                    <a class="ui bottom attached button" href="save.php?idni={{ image.idni }}&del=true" onclick="return confirm('Estàs segur/a?');">
-                        <i class="delete icon"></i>
-                        Esborrar DNI
-                    </a>
+                    <div class="extra content">
+                        <a class="left floated button page" name="{{ image.idni }}" page="{{ image.hoja }}" href="">
+                            <i class="block layout icon"></i>
+                            Situar a una fulla
+                        </a>
+                        <a class="right floated button" href="save.php?idni={{ image.idni }}&del=true" onclick="return confirm('Estàs segur/a?');">
+                            <i class="delete icon"></i>
+                            Esborrar DNI
+                        </a>
+                    </div>
                 </div>
             </div>
             {% endfor %}
         </div>
     </div>
+
+    <h2>Pujada de documents</h2>
+    <div class="ui segment">
+        <form class="ui form" method="POST" action="save.php" enctype="multipart/form-data">
+	    <div class="field">
+	        <label>Trïa el arxiu del teu disc dur</label>
+	        <input type="file" name="img" />
+            </div>
+	    <input type="submit" class="ui primary button" value="Pujar document" />
+        </form>
+    </div>
+
+<div class="ui modal page transition" style="margin-top: -250px;">
+    <i class="close icon"></i>
+    <div class="header">
+      En quina fulla vols ficar aquest DNI?
+    </div>
+    <div class="content">
+        <div class="ui buttons">
+            {% for p in paginas %}
+            <div class="ui big button set-pagina">
+		{% if loop.index0 == 0 %}
+		Sense assignar fulla
+                {% else %}
+		{{ loop.index0 }}
+		{% endif %}
+	    </div>
+            {% endfor %}
+            <div class="ui big button set-pagina">{{ paginas|length }}</div>
+        </div>
+    </div>
+    <div class="actions">
+      <div class="ui black button cancel">
+        Cancel.la
+      </div>
+    </div>
+  </div>
+
+    <script src="assets/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="assets/bower_components/cropper/dist/cropper.min.js"></script>
+    <script src="assets/bower_components/semantic/dist/semantic.min.js"></script>
+    <script src="assets/js/main.js"></script>
+
 </body>
 </html>

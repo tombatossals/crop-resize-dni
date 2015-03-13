@@ -26,7 +26,16 @@ if (isset($_GET['del'])) {
 }
 
 $idni = intval($_POST['idni']);
+
+if (array_key_exists("pagina", $_POST)) {
+   $db->setPage($idu, $idni, $_POST['pagina']);
+   echo json_encode(array("success" => true));
+   exit;
+}
+
 $ndni = $_POST['ndni'];
-$db->updateDni($idu, $idni, $_POST['img'], $ndni);
+$cara = $_POST['cara'];
+
+$db->updateDni($idu, $idni, $_POST['img'], $ndni, $cara);
 header("Content-Type: application/json");
 echo json_encode(array("success" => true));

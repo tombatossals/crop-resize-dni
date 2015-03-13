@@ -3,11 +3,18 @@
 // include and register Twig auto-loader
 include 'vendor/autoload.php';
 
-if (array_key_exists("password", $_POST) && $_POST["password"] == "demo") {
-    session_start();
-    $_SESSION["idu"] = 1;
-    header("Location: index.php");
-    exit;
+if (array_key_exists("password", $_POST) && array_key_exists("username", $_POST)) {
+
+    require "database.php";
+    $db = new Database();
+
+    $user = $db->auth($_POST["username"], $_POST["password"]);
+    if ($user) {
+        session_start();
+        $_SESSION["idu"] = $user["idu"];
+        header("Location: index.php");
+        exit;
+    }
 }
 
 Twig_Autoloader::register();

@@ -1,5 +1,10 @@
 <?php
 
+ini_set('display_startup_errors',1);
+ini_set('display_errors',1);
+error_reporting(-1);
+
+
 session_start();
 
 if (array_key_exists("logout", $_GET)) {
@@ -19,12 +24,18 @@ require "database.php";
 
 $db = new Database();
 
+$paginas = $db->getPages($idu);
+$pagina = 0;
+if (array_key_exists('pagina', $_GET)) {
+  $pagina = $_GET['pagina'];
+}
 
-$db->query('SELECT * FROM dnis where dnis.frm=:idu');
-$db->bind(':idu', $idu);
-$db->execute();
+if (!array_key_exists(0, $paginas) && $pagina == 0) {
+	header("Location: index.php?pagina=1");
+	exit;
+}
 
-$images = $db->resultset();
+$images = $db->getPage($pagina, $idu);
 
 // include and register Twig auto-loader
 include 'vendor/autoload.php';
@@ -43,8 +54,14 @@ try {
   
   // set template variables
   // render template
+  $pagina = 0;
+  if (array_key_exists('pagina', $_GET)) {
+    $pagina = $_GET['pagina'];
+  }
   echo $template->render(array(
-    'images' => $images
+    'images' => $images,
+    'pagina' => $pagina,
+    'paginas' => $paginas
   ));
   
 } catch (Exception $e) {
