@@ -19,7 +19,8 @@
     <link rel="stylesheet" href="assets/css/main.css">
     <!-- endbuild -->
 </head>
-<body>
+
+<body ng-app="dnisApp" ng-controller="cropController" ng-cloak>
     <div class="ui large menu navbar">
         <div class="left menu">
             <a href="/dnis/index.php" class="item">Gestió de DNI's</a>
@@ -31,7 +32,59 @@
 	    </div>
         </div>
     </div>
-    <div class="ui grid segment">
+
+    <div class="ui ordered steps">
+        <a class="step one" ng-class="{ active: step === 1|| !step }" ng-click="step = 1">
+            <div class="content">
+                <div class="title">Informació del DNI</div>
+                <div class="description">Introdueïx informació relativa a la foto</div>
+            </div>
+        </a>
+        <a class="step two" ng-class="{ active: step === 2 }" ng-click="stepTwo();">
+            <div class="content">
+                <div class="title">Retallar imatge</div>
+                <div class="description">Retalla la imatge del DNI</div>
+            </div>
+        </a>
+        <a class="step three" ng-class="{ active: step === 3 }" ng-click="stepThree();">
+            <div class="content">
+                <div class="title">Confirmació</div>
+                <div class="description">Comprova que tota la informació es correcta i grava</div>
+            </div>
+        </a>
+    </div>
+    <br style="margin-top: 2em;" />
+    <div class="ui grid" ng-show="!step || step === 1">
+        <div class="five wide column">
+            <div class="ui segment">
+		    <div class="ui form">
+			    <div class="ui field" ng-class="{ error: !validDni }">
+				<label>Introdueïx el nombre i lletra del DNI de la imatge</label>
+				<div class="ui icon input" ng-init="ndni = '{{ image.ndni }}'; validDni = validateDni(ndni)">
+				    <input type="text" id="ndni" ng-model="ndni" name="ndni" ng-change="validDni = validateDni(ndni)" placeholder="Introdueïx el nombre de DNI que veus a la imatge">
+				</div>
+			    </div>
+		    </div>
+            </div>
+            <div class="ui segment">
+                <h4>Això és el frontal o el revers?</h4>
+                <div class="2 fluid ui buttons">
+                    <div class="ui button cara{% if image.cara == 0 %} active{% endif %} " ng-click="frontal=true" name="frontal">Frontal</div>
+		    <div class="or" data-text="o"></div>
+                    <div class="ui button cara{% if image.cara == 1 %} active{% endif %}" ng-click="frontal=false" name="reverso">Revers</div>
+                </div>
+            </div>
+            <div class="ui big button positive" style="margin-top: 2em;" ng-click="stepTwo();">Següent pas <i class="right chevron icon"></i></div>
+        </div>
+
+        <div class="six wide column">
+            <div class="ui segment" style="margin-left: 1em;">
+                <img class="ui image" src="image.php?idni={{ image.idni }}">
+            </div>
+        </div>
+</div>
+
+    <div class="ui grid" ng-show="step === 2">
         <div class="one wide column">
 	    <div class="ui vertical labeled icon menu">
 	        <a class="zoomin item">
@@ -52,86 +105,55 @@
 		</a>
 		<a class="left5 item">
 		    <i class="caret left icon"></i>
-		    -5 graus
+		    -1 grau
 		</a>
 		<a class="right5 item">
 		    <i class="caret right icon"></i>
-		    5 graus
+		    1 grau
                 </a>
-		<a class="cancel item" href="index.php">
-		    <i class="cancel icon"></i>
-		    Sortir
-		</a>
 	    </div>
         </div> 
-        <div class="six wide column">
+        <div class="seven wide column">
             <div class="ui segment" style="margin-left: 1em;">
-                <img class="ui main image" src="image.php?idni={{ image.idni }}">
+                <img class="ui main big image" src="image.php?idni={{ image.idni }}">
             </div>
         </div>
-        <div class="four wide column">
-            <div class="ui segment">
-		    <div class="ui form">
-			    <div class="ui field">
-				<label>Introdueïx el nombre i lletra del DNI de la imatge</label>
-				<div class="ui icon input">
-				    <input type="text" id="ndni" name="ndni" value="{{ image.ndni }}" placeholder="Introdueïx el nombre de DNI que veus a la imatge">
-				</div>
-			    </div>
-			    <div class="ui field">
-				<label>&nbsp;</label>
-				<a class="ui primary button save-dni">
-				    <i class="save icon"></i>
-				    Guardar DNI
-				</a>
-			    </div>
-		    </div>
-            </div>
-
-<div class="ui buttons">
-  <div class="ui button cara{% if image.cara == 0 %} active{% endif %} " name="frontal">Frontal</div>
-  <div class="ui button cara{% if image.cara == 1 %} active{% endif %}" name="reverso">Reverso</div>
-</div>
-
-        </div>
-        <div class="four wide column">
+        <div class="three wide column">
             <div class="ui segment">
 		    <h4 style="margin-top: 0;">Previsualitzacio</h4>
 		    <div class="preview">
 			<img class="ui small image" src="image.php?idni={{ image.idni }}">
 		    </div>
 		    <h4 id="dimensions"></h4>
-		    <a class="ui primary button save">
-			<i class="save icon"></i>
-			Guardar imatge de DNI retallada
-		    </a>
 	    </div>
+            <div class="ui big button positive" style="margin-top: 2em;" ng-click="step=3; stepThree();">Següent pas <i class="right chevron icon"></i></div>
         </div>
     </div>
 
-<div class="ui modal crop transition" style="margin-top: -250px;">
-    <i class="close icon"></i>
-    <div class="header">
-      Estas segur de retallar aquest DNI?
+    <div class="ui grid" ng-show="step === 3">
+        <div class="six wide column">
+            <div class="ui segment">
+                <img class="ui image preview2" src="image.php?idni={{ image.idni }}">
+            </div>
+        </div>
+        <div class="four wide column">
+	    <div class="ui segment">
+                <h3 ng-bind="'Nombre de DNI: ' + ndni">/h3>
+            </div>
+	    <div class="ui huge label blue" ng-show="frontal">
+                Frontal
+            </div>
+	    <div class="ui huge label blue" ng-show="!frontal">
+                Revers
+            </div>
+            <div class="ui big button positive" ng-click="save()" style="margin-top: 2em;" ng-click="stepThree()">Confirmar i enviar <i class="right chevron icon"></i></div>
+        </div>
     </div>
-    <div class="content">
-      <img class="ui image preview2" src="image.php?idni={{ image.idni }}">
-      <h4 class="ndni-modal">189912</h4>
-    </div>
-    <div class="actions">
-      <div class="ui black button cancel">
-        No, guaita
-      </div>
-      <div class="ui positive right labeled icon button save2">
-        Si, vinga
-        <i class="checkmark icon"></i>
-      </div>
-    </div>
-  </div>
 
     <script src="assets/bower_components/jquery/dist/jquery.min.js"></script>
     <script src="assets/bower_components/cropper/dist/cropper.min.js"></script>
     <script src="assets/bower_components/semantic/dist/semantic.min.js"></script>
+    <script src="assets/bower_components/angular/angular.min.js"></script>
     <script src="assets/js/main.js"></script>
 </body>
 </html>

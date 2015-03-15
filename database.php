@@ -83,10 +83,10 @@ class Database {
         return $this->single();
     }
 
-    public function setPage($idu, $idni, $pagina) {
-        $this->stmt = $this->db->prepare("UPDATE dnis SET hoja=:pagina WHERE idni=:idni and frm=:frm");
+    public function setPage($idu, $ndni, $pagina) {
+        $this->stmt = $this->db->prepare("UPDATE dnis SET hoja=:pagina WHERE ndni=:ndni and frm=:frm");
         $this->bind(":frm", $idu);
-        $this->bind(":idni", $idni);
+        $this->bind(":ndni", $ndni);
         $this->bind(":pagina", intval($pagina));
         $this->execute();
     }
@@ -110,7 +110,43 @@ class Database {
         $this->bind(":idu", $idu);
 	$this->bind(':pagina', $pagina);
 	$this->execute();
-	return $this->resultset();
+	$res = $this->resultset();
+	$dnis = array();
+	$dnis["number"] = array();
+	$dnis["nonumber"] = array();
+	$dnis["duplicate"] = array();
+
+	foreach ($res as $dni) {
+		if (array_key_exists('ndni', $dni) && $dni['ndni']) {
+			$ndni = $dni['ndni'];
+			if (!array_key_exists($ndni, $dnis["number"])) {
+				$dnis["number"][$ndni] = array();	
+			}
+
+			if (array_key_exists($dni['cara'], $dnis["number"][$ndni])) {
+				$dnis["duplicate"][] = array(
+					"ndni" => $ndni,
+					"idni" => $dni['idni'],
+					"cara"=> $dni['cara']
+				);
+				continue;
+			}
+
+			$dnis["number"][$ndni][strval($dni['cara'])] = array(
+				"ndni" => $ndni,
+				"idni" => $dni['idni'],
+				"img" => $dni['img'],
+				"cara"=> $dni['cara']
+			);
+		} else {
+			$dnis["nonumber"][] = array(
+				"idni" => $dni['idni'],
+				"cara"=> $dni['cara']
+			);
+		}
+	}	
+
+	return $dnis;
     }
 
     public function deleteDni($idu, $idni) {
@@ -121,9 +157,22 @@ class Database {
     }
 
     public function insertDni($idu, $file) {
+
+        list($width, $height) = getimagesizefromstring($file);
+        if ($width < 1024) {
+            $i2 = imagecreatetruecolor(1024, $height*1024/$width);
+            $i = imagecreatefromstring($file);
+            imagecopyresampled($i2, $i, 0, 0, 0, 0, 1024, $height*1024/$width, $width, $height);
+            ob_start();
+            imagejpeg($i2);
+            $img = ob_get_contents();
+            ob_end_clean();
+        }
+
+
         $this->stmt = $this->db->prepare("INSERT INTO dnis(frm, img) VALUES(:frm, :img)");
         $this->bind(":frm", $idu);
-        $this->bind(":img", $file);
+        $this->bind(":img", $img);
         $this->execute();
     }
 

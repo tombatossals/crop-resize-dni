@@ -4,6 +4,7 @@
   "dependencies": {
     "semantic": "latest",
     "jquery": "latest",
-    "cropper": "~0.8.0"
+    "cropper": "~0.8.0",
+    "angular": "~1.3.14"
   }
 }

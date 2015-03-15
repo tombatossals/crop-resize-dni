@@ -7,38 +7,37 @@ if (!isset($_SESSION['idu'])) {
     exit;
 }
 
-if (!isset($_GET['idni'])) {
-  exit;
-}
-
-$idni = intval($_GET['idni']);
 $idu = $_SESSION['idu'];
 
-if ($idni <= 0) {
+if ($idu <= 0) {
   exit;
 }
 
-require "database.php";
+#require('fpdf.php');
+require('mem_image.php');
+require('database.php');
 
 $db = new Database();
 
-$db->query('SELECT * FROM dnis, usuarios where idni=:idni and usuarios.idu=dnis.frm and usuarios.idu=:idu');
-$db->bind(':idni', $idni);
-$db->bind(':idu', $idu);
-$db->execute();
-
-$row = $db->single();
-
-if ($row) {
-    header("Content-type: image/jpeg");
-
-    if (array_key_exists("thumb", $_GET)) {
-    	print_r(thumbnail($row["img"]));
-    } else {
-    	print_r($row["img"]);
-    }
+if (array_key_exists('pagina', $_GET)) {
+  $pagina = $_GET['pagina'];
+} else {
+  exit;
 }
 
+$images = $db->getPage($pagina, $idu);
+
+$pdf = new PDF_MemImage();
+$pdf->AddPage();
+
+$y = 10;
+foreach ($images["number"] as $image) {
+        $pdf->MemImage(thumbnail($image[0]['img']), 10, $y);
+        $pdf->MemImage(thumbnail($image[1]['img']), 120, $y);
+        $y = $y + 55;
+}
+
+$pdf->Output();
 
 function thumbnail($im) {
     $info = getimagesizefromstring($im);
@@ -54,7 +53,7 @@ function thumbnail($im) {
     $width  = isset($info['width'])  ? $info['width']  : $info[0];
     $height = isset($info['height']) ? $info['height'] : $info[1];
 
-    $maxSize = 400;
+    $maxSize = 300;
 
     // Calculate aspect ratio
     $wRatio = $maxSize / $width;

@@ -30,49 +30,93 @@
 	    </div>
         </div>
     </div>
-    <div class="ui segment">
-        <h4>Sel.lecciona la fulla de DNI's que vols visualitzar</h4>
+    <h3 class="ui top attached header">Sel.lecciona la fulla de DNI's que vols visualitzar</h3>
+    <div class="ui attached segment">
         <div class="ui buttons">
             {% for key,p in paginas %}
             <a class="ui big button{% if pagina == key %} active{% endif %}" href="index.php?pagina={{ key }}">
 		{% if key == 0 %}
 		Sense fulla assignada
+		<div class="ui small teal label" style="margin-left: 1em;">{{ p }} imatges</div>
                 {% else %}
 		Fulla {{ key }}
-		{% endif %}
 	        {% if p > 0 %}
-			<div class="ui small teal label" style="margin-left: 1em;">{{ p }} dnis</div>
+			<div class="ui small teal label" style="margin-left: 1em;">{{ p/2 }} dnis</div>
 		{% else %}
 			<div class="ui small teal label" style="margin-left: 1em;">cap</div>
+		{% endif %}
 		{% endif %}
 	    </a>
             {% endfor %}
         </div>
     </div>
 
-    <h2>{% if pagina > 0 %}Fulla {{ pagina }}. {% endif %}Fes click en una imatge per gestionar-la</h2>
-    {% if pagina > 0 %}<div class="ui title"><a href="pdf.php?pagina={{ pagina }}"><i class="file pdf outline icon"></i> Impressió de la fulla</a></div>{% endif %}
+    {% if pagina > 0 %}<div class="ui header"><a href="pdf.php?pagina={{ pagina }}"><i class="file pdf outline icon"></i> Impressió de la fulla</a></div>{% endif %}
+    {% if images["number"]|length > 0 %}
     <div class="ui segment">
-        <div class="ui four column grid">
-	    {% if images|length == 0 %}
-		<h3 class="ui title">No n'hi han dni's a aquesta fulla.</h3>
-	    {% endif %}
-            {% for image in images %}
+        <div class="ui two column grid">
+            {% for key,image in images["number"] %}
             <div class="column">
                 <div class="ui fluid card">
-                    <div class="ui image">
-                        <a href="crop.php?idni={{ image.idni }}"><img class="ui image" src="image.php?idni={{ image.idni }}"></a>
-                    </div>
-                    {% if image.ndni %}
+		    <div class="ui two column grid">
+			<div class="column">
+                            <div class="ui image">
+				{% if image[0] %}
+                                <a href="crop.php?idni={{ image[0]['idni'] }}"><img class="ui image" src="image.php?idni={{ image[0]['idni'] }}&thumb=true"></a>
+				{% else %}
+                                <img class="ui image" src="/dnis/assets/img/frontal.jpg">
+				{% endif %}
+                            </div>
+                        </div>
+			<div class="column">
+                            <div class="ui image">
+				{% if image[1] %}
+                                <a href="crop.php?idni={{ image[1].idni }}"><img class="ui image" src="image.php?idni={{ image[1].idni }}&thumb=true"></a>
+				{% else %}
+                                <img class="ui image" src="/dnis/assets/img/reverso.jpg">
+				{% endif %}
+                            </div>
+                        </div>
+		    </div>
+                    {% if image[0].ndni or image[1].ndni %}
                     <div class="content">
-			<strong style="font-size: 1.4em;">{{ image.ndni }}</strong>
+			{% if image[0].ndni %}
+			<strong style="font-size: 1.4em;">{{ image[0].ndni }}</strong>
+			{% else %}
+			<strong style="font-size: 1.4em;">{{ image[1].ndni }}</strong>
+			{% endif %}
                     </div>
                     {% endif %}
                     <div class="extra content">
-                        <a class="left floated button page" name="{{ image.idni }}" page="{{ image.hoja }}" href="">
+			{% if image|length == 2 %}
+                        <a class="left floated button page" name="{{ image[0].ndni }}" href="">
                             <i class="block layout icon"></i>
                             Situar a una fulla
                         </a>
+			{% endif %}
+                        <a class="right floated button" href="save.php?idni={{ image[0].idni }}&idni2={{ image[1].idni }}&del=true" onclick="return confirm('Estàs segur/a?');">
+                            <i class="delete icon"></i>
+                            Esborrar DNI
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if images["nonumber"]|length > 0 %}
+    <h2 class="ui top attached header">DNI's sense nombre</h2>
+    <div class="ui attached segment">
+        <div class="ui two column grid">
+            {% for image in images["nonumber"] %}
+            <div class="column">
+                <div class="ui fluid card">
+                    <div class="ui image">
+                        <a href="crop.php?idni={{ image['idni'] }}"><img class="ui image" src="image.php?idni={{ image['idni'] }}&thumb=true"></a>
+                    </div>
+                    <div class="extra content">
                         <a class="right floated button" href="save.php?idni={{ image.idni }}&del=true" onclick="return confirm('Estàs segur/a?');">
                             <i class="delete icon"></i>
                             Esborrar DNI
@@ -83,17 +127,30 @@
             {% endfor %}
         </div>
     </div>
+    {% endif %}
 
-    <h2>Pujada de documents</h2>
-    <div class="ui segment">
-        <form class="ui form" method="POST" action="save.php" enctype="multipart/form-data">
-	    <div class="field">
-	        <label>Trïa el arxiu del teu disc dur</label>
-	        <input type="file" name="img" />
+    {% if images["duplicate"]|length > 0 %}
+    <h2 class="ui top attached header">DNI's duplicats o invàlids</h2>
+    <div class="ui attached segment">
+        <div class="ui two column grid">
+            {% for image in images["duplicate"] %}
+            <div class="column">
+                <div class="ui fluid card">
+                    <div class="ui image">
+                        <a href="crop.php?idni={{ image['idni'] }}"><img class="ui image" src="image.php?idni={{ image['idni'] }}&thumb=true"></a>
+                    </div>
+                    <div class="extra content">
+                        <a class="right floated button" href="save.php?idni={{ image.idni }}&del=true" onclick="return confirm('Estàs segur/a?');">
+                            <i class="delete icon"></i>
+                            Esborrar DNI
+                        </a>
+                    </div>
+                </div>
             </div>
-	    <input type="submit" class="ui primary button" value="Pujar document" />
-        </form>
+            {% endfor %}
+        </div>
     </div>
+    {% endif %}
 
 <div class="ui modal page transition" style="margin-top: -250px;">
     <i class="close icon"></i>
@@ -121,6 +178,7 @@
     </div>
   </div>
 
+    <script src="assets/bower_components/angular/angular.min.js"></script>
     <script src="assets/bower_components/jquery/dist/jquery.min.js"></script>
     <script src="assets/bower_components/cropper/dist/cropper.min.js"></script>
     <script src="assets/bower_components/semantic/dist/semantic.min.js"></script>

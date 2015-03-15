@@ -30,8 +30,9 @@ if (array_key_exists('pagina', $_GET)) {
   $pagina = $_GET['pagina'];
 }
 
-if (!array_key_exists(0, $paginas) && $pagina == 0) {
-	header("Location: index.php?pagina=1");
+if (count($paginas) > 0 && !array_key_exists($pagina, $paginas)) {
+        $keys = array_keys($paginas);
+	header("Location: index.php?pagina=" . array_shift($keys));
 	exit;
 }
 
@@ -58,6 +59,7 @@ try {
   if (array_key_exists('pagina', $_GET)) {
     $pagina = $_GET['pagina'];
   }
+
   echo $template->render(array(
     'images' => $images,
     'pagina' => $pagina,
