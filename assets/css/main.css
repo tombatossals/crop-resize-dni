@@ -7,3 +7,7 @@ body {
     width:100%;
     text-align:center,
 }
+
+.ui.list .item a {
+    color: #337b92 !important;
+}

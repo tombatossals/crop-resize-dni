@@ -12,8 +12,16 @@ if (array_key_exists("password", $_POST) && array_key_exists("username", $_POST)
     if ($user) {
         session_start();
         $_SESSION["idu"] = $user["idu"];
-        header("Location: index.php");
+
+	if ($user["idu"] == 0) {
+        	$_SESSION["admin"] = 1;
+       		header("Location: admin.php");
+		exit;
+	}
+
+       	header("Location: index.php");
         exit;
+
     }
 }
 

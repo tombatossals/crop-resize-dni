@@ -24,32 +24,17 @@
             <a href="" class="item">Gestió de DNI's</a>
         </div>
         <div class="right menu">
-	    {% if admin == 1 %}
-            <a href="admin.php" class="item">Canviar usuari</a>
-            {% endif %}
             <a href="http://guanyemcastello.org" class="item">Guanyem Castelló</a>
 	    <div class="item">
     	        <a href="?logout" class="ui primary button">Sortir de la sessió</a>
 	    </div>
         </div>
     </div>
-    <h3 class="ui top attached header">Sel.lecciona la fulla de DNI's que vols visualitzar</h3>
+    <h3 class="ui top attached header">Sel.lecciona el usuari al que et vols mapejar</h3>
     <div class="ui attached segment">
-        <div class="ui buttons">
-            {% for key,p in paginas %}
-            <a class="ui big button{% if pagina == key %} active{% endif %}" href="index.php?pagina={{ key }}">
-		{% if key == 0 %}
-		Sense fulla assignada
-		<div class="ui small teal label" style="margin-left: 1em;">{{ p }} imatges</div>
-                {% else %}
-		Fulla {{ key }}
-	        {% if p > 0 %}
-			<div class="ui small teal label" style="margin-left: 1em;">{{ p/2 }} dnis</div>
-		{% else %}
-			<div class="ui small teal label" style="margin-left: 1em;">cap</div>
-		{% endif %}
-		{% endif %}
-	    </a>
+        <div class="ui bulleted list">
+            {% for key,p in usuarios %}
+	    <div class="item"><a href="admin.php?user={{key}}">{{ p }}</a></div>
             {% endfor %}
         </div>
     </div>

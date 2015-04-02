@@ -13,8 +13,14 @@ if (array_key_exists("logout", $_GET)) {
     exit;
 }
 
-if (!isset($_SESSION['idu'])) {
+if (!isset($_SESSION['idu']) || $_SESSION['admin'] != True) {
     header('Location: login.php');
+    exit;
+}
+
+if (array_key_exists("user", $_GET)) {
+    $_SESSION['idu'] = $_GET["user"];
+    header('Location: index.php');
     exit;
 }
 
@@ -24,19 +30,7 @@ require "database.php";
 
 $db = new Database();
 
-$paginas = $db->getPages($idu);
-$pagina = 0;
-if (array_key_exists('pagina', $_GET)) {
-  $pagina = $_GET['pagina'];
-}
-
-if (count($paginas) > 0 && !array_key_exists($pagina, $paginas)) {
-        $keys = array_keys($paginas);
-	header("Location: index.php?pagina=" . array_shift($keys));
-	exit;
-}
-
-$images = $db->getPage($pagina, $idu);
+$usuarios = $db->getUsers();
 
 // include and register Twig auto-loader
 include 'vendor/autoload.php';
@@ -51,25 +45,10 @@ try {
   $twig = new Twig_Environment($loader);
   
   // load template
-  $template = $twig->loadTemplate('front.tmpl');
+  $template = $twig->loadTemplate('admin.tmpl');
   
-  // set template variables
-  // render template
-  $pagina = 0;
-  if (array_key_exists('pagina', $_GET)) {
-    $pagina = $_GET['pagina'];
-  }
-
-  $admin = 0;
-  if (array_key_exists("admin", $_SESSION)) {
-      $admin = $_SESSION["admin"];
-  }
-
   echo $template->render(array(
-    'images' => $images,
-    'pagina' => $pagina,
-    'paginas' => $paginas,
-    'admin' => $admin
+    'usuarios' => $usuarios
   ));
   
 } catch (Exception $e) {
