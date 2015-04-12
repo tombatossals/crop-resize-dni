@@ -31,6 +31,7 @@ require "database.php";
 $db = new Database();
 
 $usuarios = $db->getUsers();
+$total = $db->getNumTotalDnis();
 
 // include and register Twig auto-loader
 include 'vendor/autoload.php';
@@ -48,7 +49,8 @@ try {
   $template = $twig->loadTemplate('admin.tmpl');
   
   echo $template->render(array(
-    'usuarios' => $usuarios
+    'usuarios' => $usuarios,
+    'total' => $total
   ));
   
 } catch (Exception $e) {

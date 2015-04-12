@@ -33,7 +33,15 @@ if ($row) {
     header("Content-type: image/jpeg");
 
     if (array_key_exists("thumb", $_GET)) {
-    	print_r(thumbnail($row["img"]));
+	$cache = "cache/" . $row['frm'] . "-" . $row['idni'] . ".jpg";
+	if (file_exists($cache)) {
+    		readfile($cache);
+	} else {
+		$fp = fopen($cache, "w") or die("no");
+		fwrite($fp, thumbnail($row["img"]));
+		fclose($fp);
+    		print_r(thumbnail($row["img"]));
+	}
     } else {
     	print_r($row["img"]);
     }
@@ -55,6 +63,10 @@ function thumbnail($im) {
     $height = isset($info['height']) ? $info['height'] : $info[1];
 
     $maxSize = 400;
+
+    if ($width < $maxSize && $height < $maxSize) {
+       return $im; 
+    }
 
     // Calculate aspect ratio
     $wRatio = $maxSize / $width;

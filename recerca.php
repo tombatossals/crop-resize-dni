@@ -18,17 +18,12 @@ if (!isset($_SESSION['idu'])) {
     exit;
 }
 
-$section = "";
-if (isset($_GET['seccio']) && $_GET['seccio'] == 'assignar') {
-    $section = "assignar";
-}
-
-
 $idu = $_SESSION['idu'];
 
 require "database.php";
 
 $db = new Database();
+
 
 $n = $db->getPages($idu);
 
@@ -47,20 +42,22 @@ for ($i=0; $i<=$key; $i++) {
     }
 }
 
-$pagina = 0;
-if (array_key_exists('pagina', $_GET)) {
-  $pagina = $_GET['pagina'];
-}
+$message = "";
+$color = "";
 
-/*
-if (count($paginas) > 0 && !array_key_exists($pagina, $paginas)) {
-        $keys = array_keys($paginas);
-	header("Location: index.php?pagina=" . array_shift($keys));
-	exit;
-}
-*/
+$res = array();
+if (array_key_exists("dni", $_POST)) {
+	$res = $db->getDni($_POST['dni'], $idu);
+	if (!$res) {
+		$message = "El DNI no existeïx a la DB";
+		$color = "error";
+	} else {
+		$message = "El DNI " . $_POST['dni'] . " existeïx";
+		$color = "positive";
+	}
 
-$images = $db->getPage($pagina, $idu);
+
+}
 
 // include and register Twig auto-loader
 include 'vendor/autoload.php';
@@ -75,26 +72,13 @@ try {
   $twig = new Twig_Environment($loader);
   
   // load template
-  $template = $twig->loadTemplate('front.tmpl');
+  $template = $twig->loadTemplate('recerca.tmpl');
   
-  // set template variables
-  // render template
-  $pagina = 0;
-  if (array_key_exists('pagina', $_GET)) {
-    $pagina = $_GET['pagina'];
-  }
-
-  $admin = 0;
-  if (array_key_exists("admin", $_SESSION)) {
-      $admin = $_SESSION["admin"];
-  }
-
   echo $template->render(array(
-    'images' => $images,
-    'pagina' => $pagina,
-    'paginas' => $paginas,
-    'section' => $section,
-    'admin' => $admin
+	"message" => $message,
+	"color" => $color,
+	"paginas" => $paginas,
+	"res" => $res
   ));
   
 } catch (Exception $e) {

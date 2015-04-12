@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Gestió de DNI's</title>
+    <meta name="description" content="Gestió de DNI's en Guanyem Castelló">
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- build:css styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="assets/bower_components/semantic/dist/semantic.min.css">
+    <!-- endbower -->
+    <!-- endbuild -->
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:400,700,300&subset=latin,vietnamese' rel='stylesheet' type='text/css'>
+
+    <!-- build:css styles/main.css -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <!-- endbuild -->
+</head>
+<body ng-app="dnisApp" ng-controller="assignarController" ng-cloak>
+    <div class="ui large menu navbar">
+        <div class="left menu">
+            <a href="" class="item">Gestió de DNI's</a>
+        </div>
+        <div class="right menu">
+            <a class="item" href="admin.php">
+                Canviar usuari
+            </a>
+            <a href="http://guanyemcastello.org" class="item">Guanyem Castelló</a>
+	    <div class="item">
+    	        <a href="?logout" class="ui primary button">Sortir de la sessió</a>
+	    </div>
+        </div>
+    </div>
+    <h3>Introdueïx DNI's ja inventariats per assignar-les automàticament una fulla</h3>
+
+{% if message %}
+<div class="ui {{ color }} message">
+  <i class="close icon"></i>
+  <ul class="list">
+    <li>{{ message }}</li>
+  </ul>
+</div>
+{% endif %}
+
+    <form class="ui attached form" method="POST" action="assignar-fulla.php" ng-init="dni1='{{ dni1 }}'; dni2='{{ dni2 }}'; dni3='{{ dni3 }}'; dni4='{{ dni4 }}'; dni5='{{ dni5 }}';">
+        <div class="two fields">
+            <div class="field"  ng-class="{ error: !validDni1 }">
+            	<label>DNI1</label>
+                <div class="ui icon input">
+                    <input autocomplete="off" type="text" id="dni1" ng-model="dni1" name="dni1" capitalize ng-change="validDni1 = validateDni(dni1)" placeholder="Introdueïx el DNI">
+                </div>
+            </div>
+            <div class="field"  ng-class="{ error: !validDni2 }">
+            	<label>DNI2</label>
+                <div class="ui icon input">
+                    <input autocomplete="off" type="text" id="dni2" ng-model="dni2" name="dni2" capitalize ng-change="validDni2 = validateDni(dni2)" placeholder="Introdueïx el DNI"> 
+                </div>
+            </div>
+        </div>
+        <div class="two fields">
+            <div class="field"  ng-class="{ error: !validDni3 }">
+            	<label>DNI3</label>
+                <div class="ui icon input">
+                    <input autocomplete="off" type="text" id="dni3" ng-model="dni3" name="dni3" capitalize ng-change="validDni3 = validateDni(dni3)" placeholder="Introdueïx el DNI">
+                </div>
+            </div>
+            <div class="field"  ng-class="{ error: !validDni4 }">
+            	<label>DNI4</label>
+                <div class="ui icon input">
+                    <input autocomplete="off" type="text" id="dni4" ng-model="dni4" name="dni4" capitalize ng-change="validDni4 = validateDni(dni4)" placeholder="Introdueïx el DNI">
+                </div>
+            </div>
+        </div>
+        <div class="two fields">
+            <div class="field"  ng-class="{ error: !validDni5 }">
+            	<label>DNI5</label>
+                <div class="ui icon input">
+                    <input autocomplete="off" type="text" id="dni5" ng-model="dni5" name="dni5" capitalize ng-change="validDni5 = validateDni(dni5)" placeholder="Introdueïx el DNI">
+                </div>
+            </div>
+	</div>
+        <br />
+        <div class="two fields">
+            <div class="field">
+		<input type="submit" class="ui positive button" value="Enviar" />
+            </div>
+        </div>
+   </form>
+    <script src="assets/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="assets/bower_components/cropper/dist/cropper.min.js"></script>
+    <script src="assets/bower_components/semantic/dist/semantic.min.js"></script>
+    <script src="assets/bower_components/angular/angular.min.js"></script>
+    <script src="assets/bower_components/angular-spinkit/build/angular-spinkit.min.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

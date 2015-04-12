@@ -1,4 +1,5 @@
 <?php
+ini_set('memory_limit', '-1');
 class Database {
     private $dsn = 'mysql:host=localhost;dbname=recogidadnis';
     private $username = 'recogidadnis';
@@ -11,7 +12,6 @@ class Database {
         try {
                 $this->db = new PDO($this->dsn, $this->username, $this->password);
         } catch (PDOException $e) {
-		print_r($e);
                 $this->error = $e->getMessage();
         }
     }
@@ -99,24 +99,84 @@ class Database {
     }
 
 
+    public function dni_pendiente($ndni, $idu) {
+	$this->stmt = $this->db->prepare('SELECT hoja, ndni,frm FROM dnis WHERE frm=:frm and ndni=:ndni');
+        $this->bind(":frm", $idu);
+        $this->bind(":ndni", $ndni);
+	$this->execute();
+	$res = $this->resultset();
+	return count($res) == 2 && $res[0]["hoja"] == 0 && $res[1]["hoja"] == 0;
+    }
+
+    public function existe_hoja($hoja, $idu) {
+	$this->stmt = $this->db->prepare('SELECT count(*) as count FROM dnis WHERE frm=:frm and hoja=:hoja');
+        $this->bind(":frm", $idu);
+        $this->bind(":hoja", $hoja);
+	$this->execute();
+	$res = $this->single();
+	return $res["count"] > 0;
+    }
+
     public function getUsers() {
 	$this->stmt = $this->db->prepare('SELECT * FROM usuarios');
 	$this->execute();
 	$res = $this->resultset();
 	$users = array();
 	foreach ($res as $p) {
-		$users[$p['idu']] = $p['emailtelf'];
+		$users[$p['idu']] = array(
+			'idu' => $p['idu'],
+			'mail' => $p['emailtelf'],
+			'count' => $this->getNumDnisFirstPage($p['idu'])
+		);
 	}
 
 	return $users;
     }
 
+    public function getNumTotalDnis() {
+	$this->stmt = $this->db->prepare('SELECT count(idni) as total FROM dnis where hoja > 0 and cara = 0');
+	$res = $this->single();
+	return $res['total'];
+    }
+
+    public function getNumDnisFirstPage($idu) {
+	$this->stmt = $this->db->prepare('SELECT count(idni) as total FROM dnis where frm=:frm and hoja=0');
+        $this->bind(":frm", $idu);
+	$res = $this->single();
+	return $res['total'];
+    }
+
+
+    public function getDni($ndni, $idu) {
+	$this->stmt = $this->db->prepare('SELECT idni,hoja,ndni FROM dnis where frm=:idu and ndni=:ndni');
+        $this->bind(":idu", $idu);
+        $this->bind(":ndni", $ndni);
+	$this->execute();
+	$res = $this->resultset();
+	return $res;
+    }
+
+    public function getImage($idu, $idni) {
+	$this->stmt = $this->db->prepare('SELECT img FROM dnis where frm=:idu and idni=:idni');
+        $this->bind(":idu", $idu);
+        $this->bind(":idni", $idni);
+	$this->execute();
+	$res = $this->single();
+	return $res['img'];
+    }
+
     public function getPages($idu) {
-	$this->stmt = $this->db->prepare('SELECT hoja, count(*) as count FROM dnis where frm=:idu GROUP BY hoja');
+	$pages = array();
+	$this->stmt = $this->db->prepare('SELECT count(idni) as count FROM dnis where frm=:idu and ndni=""');
+        $this->bind(":idu", $idu);
+	$this->execute();
+	$res = $this->single();
+	$pages["nopage"] = $res['count'];
+
+	$this->stmt = $this->db->prepare('SELECT hoja, count(idni) as count FROM dnis where frm=:idu and ndni<>"" GROUP BY hoja');
         $this->bind(":idu", $idu);
 	$this->execute();
 	$res = $this->resultset();
-	$pages = array();
 	foreach ($res as $p) {
 		$pages[$p['hoja']] = $p['count'];
 	}
@@ -125,7 +185,8 @@ class Database {
     }
 
     public function getPage($pagina, $idu) {
-	$this->stmt = $this->db->prepare('SELECT * FROM dnis where frm=:idu and hoja=:pagina');
+	//$this->stmt = $this->db->prepare('SELECT * FROM dnis where frm=:idu and hoja=:pagina and ndni = 0 limit 20 union all SELECT * FROM dnis where frm=:idu and hoja=:pagina and ndni != 0');
+	$this->stmt = $this->db->prepare('SELECT ndni, idni, cara FROM dnis where frm=:idu and hoja=:pagina');
         $this->bind(":idu", $idu);
 	$this->bind(':pagina', $pagina);
 	$this->execute();
@@ -154,7 +215,6 @@ class Database {
 			$dnis["number"][$ndni][strval($dni['cara'])] = array(
 				"ndni" => $ndni,
 				"idni" => $dni['idni'],
-				"img" => $dni['img'],
 				"cara"=> $dni['cara']
 			);
 		} else {
@@ -165,6 +225,10 @@ class Database {
 		}
 	}	
 
+	if (count($dnis["nonumber"]) > 20) {
+	    shuffle($dnis["nonumber"]);
+	    $dnis["nonumber"] = array_splice($dnis["nonumber"], 1, 20);
+        }
 	return $dnis;
     }
 

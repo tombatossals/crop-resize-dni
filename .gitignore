@@ -1,3 +1,16 @@
 bower_components
 vendor
 composer.lock
+.bash_history
+.bash_profile
+.cache
+.composer
+.config
+.gitconfig
+composer.phar
+node_modules
+cache
+cache-pdf
+.vim
+.viminfo
+.vimrc

@@ -9,6 +9,7 @@
 
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
+    <link rel="stylesheet" href="assets/bower_components/angular-spinkit/build/angular-spinkit.min.css">
     <link rel="stylesheet" href="assets/bower_components/semantic/dist/semantic.min.css">
     <link rel="stylesheet" href="assets/bower_components/cropper/dist/cropper.min.css">
     <!-- endbower -->
@@ -26,6 +27,9 @@
             <a href="/index.php" class="item">Gestió de DNI's</a>
         </div>
         <div class="right menu">
+            {% if admin == 1 %}
+            <a href="admin.php" class="item">Canviar usuari</a>
+            {% endif %}
             <a href="http://guanyemcastello.org" class="item">Guanyem Castelló</a>
 	    <div class="item">
     	        <a href="?logout" class="ui primary button">Sortir de la sessió</a>
@@ -53,15 +57,17 @@
             </div>
         </a>
     </div>
+
     <br style="margin-top: 2em;" />
+
     <div class="ui grid" ng-show="!step || step === 1">
         <div class="five wide column">
             <div class="ui segment">
 		    <div class="ui form">
 			    <div class="ui field" ng-class="{ error: !validDni }">
 				<label>Introdueïx el nombre i lletra del DNI de la imatge</label>
-				<div class="ui icon input" ng-init="ndni = '{{ image.ndni }}'; validDni = validateDni(ndni)">
-				    <input type="text" id="ndni" ng-model="ndni" name="ndni" ng-change="validDni = validateDni(ndni)" placeholder="Introdueïx el nombre de DNI que veus a la imatge">
+				<div class="ui icon input" ng-init="ndni = '{{ image.ndni }}'; frontal = !{{ image.cara }}; validDni = validateDni(ndni)">
+				    <input type="text" id="ndni" ng-model="ndni" name="ndni" capitalize ng-change="validDni = validateDni(ndni)" placeholder="Introdueïx el nombre de DNI que veus a la imatge">
 				</div>
 			    </div>
 		    </div>
@@ -82,7 +88,7 @@
                 <img class="ui image" src="image.php?idni={{ image.idni }}">
             </div>
         </div>
-</div>
+    </div>
 
     <div class="ui grid" ng-show="step === 2">
         <div class="one wide column">
@@ -150,10 +156,21 @@
         </div>
     </div>
 
+    <div class="ui modal server">
+        <i class="close icon"></i>
+        <div class="header">
+            Pujant el DNI, per favor espera un moment...
+        </div>
+        <div class="content">
+            <wave-spinner></wave-spinner>
+        </div>
+    </div>
+
     <script src="assets/bower_components/jquery/dist/jquery.min.js"></script>
     <script src="assets/bower_components/cropper/dist/cropper.min.js"></script>
     <script src="assets/bower_components/semantic/dist/semantic.min.js"></script>
     <script src="assets/bower_components/angular/angular.min.js"></script>
+    <script src="assets/bower_components/angular-spinkit/build/angular-spinkit.min.js"></script>
     <script src="assets/js/main.js"></script>
 </body>
 </html>

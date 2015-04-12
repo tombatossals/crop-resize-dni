@@ -19,25 +19,74 @@ require('database.php');
 
 $db = new Database();
 
+function getCache($idu, $idni, $db) {
+        $cache = "cache-pdf/" . $idu . "-" . $idni . ".jpg";
+        if (file_exists($cache)) {
+                return file_get_contents($cache);
+        } else {
+		$img = $db->getImage($idu, $idni);
+		$thumb = thumbnail($img);
+                $fp = fopen($cache, "w") or die("no");
+                fwrite($fp, $thumb);
+                fclose($fp);
+		return $thumb;
+        }
+}
+
+class PDF extends PDF_MemImage {
+    function Footer() {
+        $this->SetY(-15);
+        $this->SetX(-15);
+	$this->SetFont('Arial','I',8);
+	$this->Cell(0,10,$this->pagina,0,0,'C');
+    }
+}
+
+$pdf = new PDF();
+
 if (array_key_exists('pagina', $_GET)) {
   $pagina = $_GET['pagina'];
+  addPage($pagina, $pdf, $db, $idu);
+} else if (array_key_exists('all', $_GET)) {
+  $paginas = $db->getPages($idu);
+  foreach ($paginas as $pag=>$val) {
+      if ($pag > 0) {
+          addPage($pag, $pdf, $db, $idu);
+      }
+  }
 } else {
   exit;
 }
 
-$images = $db->getPage($pagina, $idu);
+function addPage($pagina, $pdf, $db, $idu) {
+	$pdf->pagina = $pagina;
+	$pdf->AddPage();
+	$y = 8;
 
-$pdf = new PDF_MemImage();
-$pdf->AddPage();
+	$images = $db->getPage($pagina, $idu);
 
-$y = 10;
-foreach ($images["number"] as $image) {
-        $pdf->MemImage(thumbnail($image[0]['img']), 10, $y);
-        $pdf->MemImage(thumbnail($image[1]['img']), 120, $y);
-        $y = $y + 55;
+	foreach ($images["number"] as $image) {
+		$img1 = getCache($idu, $image[0]['idni'], $db);
+		$img2 = getCache($idu, $image[1]['idni'], $db);
+
+		if (strlen($img1) > 0) {
+        	    $pdf->MemImage($img1, 10, $y, -300);
+                }
+ 
+                if (strlen($img2) > 0) {
+        	    $pdf->MemImage($img2, 110, $y, -300);
+                }
+
+        	$y = $y + 55;
+	}
 }
 
-$pdf->Output();
+if ($pagina > 0 && array_key_exists('dw', $_GET)) {
+  $pdf->Output('Hoja' . $pagina . '.pdf', 'D');
+  header('Content-Type: unknown/unknown');
+} else {
+  $pdf->Output('Hoja' . $pagina . '.pdf', 'I');
+}
 
 function thumbnail($im) {
     $info = getimagesizefromstring($im);
@@ -53,7 +102,18 @@ function thumbnail($im) {
     $width  = isset($info['width'])  ? $info['width']  : $info[0];
     $height = isset($info['height']) ? $info['height'] : $info[1];
 
-    $maxSize = 300;
+    $maxSize = 1024;
+
+    if ($width <= $maxSize && $height <= $maxSize) {
+        $i2 = imagecreatetruecolor(1024, $height*1024/$width);
+        $i = imagecreatefromstring($im);
+        imagecopyresampled($i2, $i, 0, 0, 0, 0, 1024, $height*1024/$width, $width, $height);
+        ob_start();
+        imagejpeg($i2);
+        $img = ob_get_contents();
+        ob_end_clean();
+        return $im;
+    }
 
     // Calculate aspect ratio
     $wRatio = $maxSize / $width;
@@ -62,13 +122,7 @@ function thumbnail($im) {
     // Using imagecreatefromstring will automatically detect the file type
     $sourceImage = imagecreatefromstring($im);
 
-    // Calculate a proportional width and height no larger than the max size.
-    if ( ($width <= $maxSize) && ($height <= $maxSize) )
-    {
-        // Input is smaller than thumbnail, do nothing
-        return $sourceImage;
-    }
-    elseif ( ($wRatio * $height) < $maxSize )
+    if ( ($wRatio * $height) < $maxSize )
     {
         // Image is horizontal
         $tHeight = ceil($wRatio * $height);

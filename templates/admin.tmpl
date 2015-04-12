@@ -24,6 +24,9 @@
             <a href="" class="item">Gestió de DNI's</a>
         </div>
         <div class="right menu">
+            <a class="item" href="assignar-fulla.php">
+                Assignació automàtica de fulla a DNI's
+            </a>
             <a href="http://guanyemcastello.org" class="item">Guanyem Castelló</a>
 	    <div class="item">
     	        <a href="?logout" class="ui primary button">Sortir de la sessió</a>
@@ -34,143 +37,11 @@
     <div class="ui attached segment">
         <div class="ui bulleted list">
             {% for key,p in usuarios %}
-	    <div class="item"><a href="admin.php?user={{key}}">{{ p }}</a></div>
+	    <div class="item"><a href="admin.php?user={{key}}">{{ p['mail'] }}</a> ({{ p['count'] }} imatges pendents)</div>
             {% endfor %}
         </div>
     </div>
-
-    {% if pagina > 0 %}<div class="ui header"><a href="pdf.php?pagina={{ pagina }}"><i class="file pdf outline icon"></i> Impressió de la fulla</a></div>{% endif %}
-    {% if images["number"]|length > 0 %}
-    <div class="ui segment">
-        <div class="ui two column grid">
-            {% for key,image in images["number"] %}
-            <div class="column">
-                <div class="ui fluid card">
-		    <div class="ui two column grid">
-			<div class="column">
-                            <div class="ui image">
-				{% if image[0] %}
-                                <a href="crop.php?idni={{ image[0]['idni'] }}"><img class="ui image" src="image.php?idni={{ image[0]['idni'] }}&thumb=true"></a>
-				{% else %}
-                                <img class="ui image" src="/dnis/assets/img/frontal.jpg">
-				{% endif %}
-                            </div>
-                        </div>
-			<div class="column">
-                            <div class="ui image">
-				{% if image[1] %}
-                                <a href="crop.php?idni={{ image[1].idni }}"><img class="ui image" src="image.php?idni={{ image[1].idni }}&thumb=true"></a>
-				{% else %}
-                                <img class="ui image" src="/dnis/assets/img/reverso.jpg">
-				{% endif %}
-                            </div>
-                        </div>
-		    </div>
-                    {% if image[0].ndni or image[1].ndni %}
-                    <div class="content">
-			{% if image[0].ndni %}
-			<strong style="font-size: 1.4em;">{{ image[0].ndni }}</strong>
-			{% else %}
-			<strong style="font-size: 1.4em;">{{ image[1].ndni }}</strong>
-			{% endif %}
-                    </div>
-                    {% endif %}
-                    <div class="extra content">
-			{% if image|length == 2 %}
-                        <a class="left floated button page" name="{{ image[0].ndni }}" href="">
-                            <i class="block layout icon"></i>
-                            Situar a una fulla
-                        </a>
-			{% endif %}
-                        <a class="right floated button" href="save.php?idni={{ image[0].idni }}&idni2={{ image[1].idni }}&del=true" onclick="return confirm('Estàs segur/a?');">
-                            <i class="delete icon"></i>
-                            Esborrar DNI
-                        </a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
-
-    {% if images["nonumber"]|length > 0 %}
-    <h2 class="ui top attached header">DNI's sense nombre</h2>
-    <div class="ui attached segment">
-        <div class="ui two column grid">
-            {% for image in images["nonumber"] %}
-            <div class="column">
-                <div class="ui fluid card">
-                    <div class="ui image">
-                        <a href="crop.php?idni={{ image['idni'] }}"><img class="ui image" src="image.php?idni={{ image['idni'] }}&thumb=true"></a>
-                    </div>
-                    <div class="extra content">
-                        <a class="right floated button" href="save.php?idni={{ image.idni }}&del=true" onclick="return confirm('Estàs segur/a?');">
-                            <i class="delete icon"></i>
-                            Esborrar DNI
-                        </a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
-
-    {% if images["duplicate"]|length > 0 %}
-    <h2 class="ui top attached header">DNI's duplicats o invàlids</h2>
-    <div class="ui attached segment">
-        <div class="ui two column grid">
-            {% for image in images["duplicate"] %}
-            <div class="column">
-                <div class="ui fluid card">
-                    <div class="ui image">
-                        <a href="crop.php?idni={{ image['idni'] }}"><img class="ui image" src="image.php?idni={{ image['idni'] }}&thumb=true"></a>
-                    </div>
-                    <div class="extra content">
-                        <a class="right floated button" href="save.php?idni={{ image.idni }}&del=true" onclick="return confirm('Estàs segur/a?');">
-                            <i class="delete icon"></i>
-                            Esborrar DNI
-                        </a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
-
-<div class="ui modal page transition" style="margin-top: -250px;">
-    <i class="close icon"></i>
-    <div class="header">
-      En quina fulla vols ficar aquest DNI?
-    </div>
-    <div class="content">
-        <div class="ui buttons">
-            {% for p in paginas %}
-            <div class="ui big button set-pagina">
-		{% if loop.index0 == 0 %}
-		Sense assignar fulla
-                {% else %}
-		{{ loop.index0 }}
-		{% endif %}
-	    </div>
-            {% endfor %}
-            <div class="ui big button set-pagina">{{ paginas|length }}</div>
-        </div>
-    </div>
-    <div class="actions">
-      <div class="ui black button cancel">
-        Cancel.la
-      </div>
-    </div>
-  </div>
-
-    <script src="assets/bower_components/angular/angular.min.js"></script>
-    <script src="assets/bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="assets/bower_components/cropper/dist/cropper.min.js"></script>
-    <script src="assets/bower_components/semantic/dist/semantic.min.js"></script>
-    <script src="assets/js/main.js"></script>
+    <h3 class="ui bottom attached header">Nombre aproximat de Dni's registrats: {{ total }}</h3>
 
 </body>
 </html>

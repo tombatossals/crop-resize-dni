@@ -27,35 +27,193 @@
 	    {% if admin == 1 %}
             <a href="admin.php" class="item">Canviar usuari</a>
             {% endif %}
+            <a href="recerca.php" class="item">Recerca de DNI's</a>
             <a href="http://guanyemcastello.org" class="item">Guanyem Castelló</a>
 	    <div class="item">
     	        <a href="?logout" class="ui primary button">Sortir de la sessió</a>
 	    </div>
         </div>
     </div>
-    <h3 class="ui top attached header">Sel.lecciona la fulla de DNI's que vols visualitzar</h3>
-    <div class="ui attached segment">
-        <div class="ui buttons">
-            {% for key,p in paginas %}
-            <a class="ui big button{% if pagina == key %} active{% endif %}" href="index.php?pagina={{ key }}">
-		{% if key == 0 %}
-		Sense fulla assignada
-		<div class="ui small teal label" style="margin-left: 1em;">{{ p }} imatges</div>
-                {% else %}
-		Fulla {{ key }}
-	        {% if p > 0 %}
-			<div class="ui small teal label" style="margin-left: 1em;">{{ p/2 }} dnis</div>
-		{% else %}
-			<div class="ui small teal label" style="margin-left: 1em;">cap</div>
-		{% endif %}
-		{% endif %}
-	    </a>
-            {% endfor %}
+    <div class="ui menu">
+        <a class="item{% if section=='' and pagina==0%} active{% endif %}" href="index.php">
+            DNI's sense processar
+            <div class="ui small teal label" style="margin-left: 1em;">{{ paginas['nopage'] }} imatges</div>
+        </a>
+        <a class="item{% if section=='assignar' and pagina==0 %} active{% endif %}" href="index.php?seccio=assignar">
+            DNI's sense fulla assignada
+            <div class="ui small teal label" style="margin-left: 1em;">{{ paginas[0] }} imatges</div>
+        </a>
+    </div>
+    <div class="ui menu">
+        <div class="ui item">
+            <div class="ui dropdown">
+                <div class="text">Navegador de fulles 1-100</div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+            		{% for key,p in paginas %}
+			    {% if key > 0 and key <= 100 %}
+				{% if key % 4 == 1 %}
+				<div class="ui basic buttons" style="width: 640px; box-shadow: none;">
+				{% endif %}
+			            <a class="ui button" style="width: 160px; box-shadow: none; border-left: 0px;" href="index.php?pagina={{ key }}">Fulla {{ key }}
+	        	                {% if p > 0 %}
+			                <div class="ui small teal label" style="margin-left: 1em;">{{ p/2 }} dnis</div>
+		                        {% else %}
+			                <div class="ui small teal label" style="margin-left: 1em;">cap</div>
+		                        {% endif %}
+			            </a>
+				{% if key == loop.last %}
+				</div>
+				{% else %}
+				{% if key % 4 == 0 %}
+				</div>
+				<div class="ui divider" style="border: 0px;"></div>
+		                {% endif %}
+		                {% endif %}
+		            {% endif %}
+            		{% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% if paginas | length > 100 %}
+        <div class="ui item">
+            <div class="ui dropdown">
+                <div class="text">101-200</div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+            		{% for key,p in paginas %}
+			    {% if key > 100 and key <=200 %}
+				{% if key % 4 == 1 %}
+				<div class="ui basic buttons" style="width: 640px; box-shadow: none;">
+				{% endif %}
+			            <a class="ui button" style="width: 160px; box-shadow: none; border-left: 0px;" href="index.php?pagina={{ key }}">Fulla {{ key }}
+	        	                {% if p > 0 %}
+			                <div class="ui small teal label" style="margin-left: 1em;">{{ p/2 }} dnis</div>
+		                        {% else %}
+			                <div class="ui small teal label" style="margin-left: 1em;">cap</div>
+		                        {% endif %}
+			            </a>
+				{% if key == loop.last %}
+				</div>
+				{% else %}
+				{% if key % 4 == 0 %}
+				</div>
+				<div class="ui divider" style="border: 0px;"></div>
+		                {% endif %}
+		                {% endif %}
+		            {% endif %}
+            		{% endfor %}
+                    </div>
+              </div>
         </div>
+        {% endif %}
+        {% if paginas | length > 200 %}
+        <div class="ui item">
+            <div class="ui dropdown">
+                <div class="text">201-300</div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+            		{% for key,p in paginas %}
+			    {% if key > 200  and key <= 300 %}
+				{% if key % 4 == 1 %}
+				<div class="ui basic buttons" style="width: 640px; box-shadow: none;">
+				{% endif %}
+			            <a class="ui button" style="width: 160px; box-shadow: none; border-left: 0px;" href="index.php?pagina={{ key }}">Fulla {{ key }}
+	        	                {% if p > 0 %}
+			                <div class="ui small teal label" style="margin-left: 1em;">{{ p/2 }} dnis</div>
+		                        {% else %}
+			                <div class="ui small teal label" style="margin-left: 1em;">cap</div>
+		                        {% endif %}
+			            </a>
+				{% if key == loop.last %}
+				</div>
+				{% else %}
+				{% if key % 4 == 0 %}
+				</div>
+				<div class="ui divider" style="border: 0px;"></div>
+		                {% endif %}
+		                {% endif %}
+		            {% endif %}
+            		{% endfor %}
+                    </div>
+              </div>
+        </div>
+        {% endif %}
+        {% if paginas | length > 300 %}
+        <div class="ui item">
+            <div class="ui dropdown">
+                <div class="text">301-400</div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+            		{% for key,p in paginas %}
+			    {% if key > 300  and key <= 400 %}
+				{% if key % 4 == 1 %}
+				<div class="ui basic buttons" style="width: 640px; box-shadow: none;">
+				{% endif %}
+			            <a class="ui button" style="width: 160px; box-shadow: none; border-left: 0px;" href="index.php?pagina={{ key }}">Fulla {{ key }}
+	        	                {% if p > 0 %}
+			                <div class="ui small teal label" style="margin-left: 1em;">{{ p/2 }} dnis</div>
+		                        {% else %}
+			                <div class="ui small teal label" style="margin-left: 1em;">cap</div>
+		                        {% endif %}
+			            </a>
+				{% if key == loop.last %}
+				</div>
+				{% else %}
+				{% if key % 4 == 0 %}
+				</div>
+				<div class="ui divider" style="border: 0px;"></div>
+		                {% endif %}
+		                {% endif %}
+		            {% endif %}
+            		{% endfor %}
+                    </div>
+              </div>
+        </div>
+        {% endif %}
+        {% if paginas | length > 400 %}
+        <div class="ui item">
+            <div class="ui dropdown">
+                <div class="text">401-500</div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+            		{% for key,p in paginas %}
+			    {% if key > 400  and key <= 500 %}
+				{% if key % 4 == 1 %}
+				<div class="ui basic buttons" style="width: 640px; box-shadow: none;">
+				{% endif %}
+			            <a class="ui button" style="width: 160px; box-shadow: none; border-left: 0px;" href="index.php?pagina={{ key }}">Fulla {{ key }}
+	        	                {% if p > 0 %}
+			                <div class="ui small teal label" style="margin-left: 1em;">{{ p/2 }} dnis</div>
+		                        {% else %}
+			                <div class="ui small teal label" style="margin-left: 1em;">cap</div>
+		                        {% endif %}
+			            </a>
+				{% if key == loop.last %}
+				</div>
+				{% else %}
+				{% if key % 4 == 0 %}
+				</div>
+				<div class="ui divider" style="border: 0px;"></div>
+		                {% endif %}
+		                {% endif %}
+		            {% endif %}
+            		{% endfor %}
+                    </div>
+              </div>
+        </div>
+        {% endif %}
+	<!--
+        <a class="item" target="_new" href="pdf.php">
+            PDF amb totes les fulles
+            <div class="ui small teal label" style="margin-left: 1em;">{{ paginas|length -1 }}</div>
+        </a>
+	-->
+    </div>
     </div>
 
-    {% if pagina > 0 %}<div class="ui header"><a href="pdf.php?pagina={{ pagina }}"><i class="file pdf outline icon"></i> Impressió de la fulla</a></div>{% endif %}
-    {% if images["number"]|length > 0 %}
+    {% if pagina > 0 %}<div class="ui header"><a target="_new" href="pdf.php?pagina={{ pagina }}"><i class="file pdf outline icon"></i> Impressió de la fulla {{ pagina }}</a></div>{% endif %}
+    {% if (section=='assignar' or pagina>0) and images["number"]|length > 0 %}
     <div class="ui segment">
         <div class="ui two column grid">
             {% for key,image in images["number"] %}
@@ -67,7 +225,7 @@
 				{% if image[0] %}
                                 <a href="crop.php?idni={{ image[0]['idni'] }}"><img class="ui image" src="image.php?idni={{ image[0]['idni'] }}&thumb=true"></a>
 				{% else %}
-                                <img class="ui image" src="/dnis/assets/img/frontal.jpg">
+                                <img class="ui image" src="/assets/img/frontal.jpg">
 				{% endif %}
                             </div>
                         </div>
@@ -76,7 +234,7 @@
 				{% if image[1] %}
                                 <a href="crop.php?idni={{ image[1].idni }}"><img class="ui image" src="image.php?idni={{ image[1].idni }}&thumb=true"></a>
 				{% else %}
-                                <img class="ui image" src="/dnis/assets/img/reverso.jpg">
+                                <img class="ui image" src="/assets/img/reverso.jpg">
 				{% endif %}
                             </div>
                         </div>
@@ -109,6 +267,7 @@
     </div>
     {% endif %}
 
+    {% if section != 'assignar' %}
     {% if images["nonumber"]|length > 0 %}
     <h2 class="ui top attached header">DNI's sense nombre</h2>
     <div class="ui attached segment">
@@ -154,26 +313,29 @@
         </div>
     </div>
     {% endif %}
+    {% endif %}
+ 
 
 <div class="ui modal page transition" style="margin-top: -250px;">
     <i class="close icon"></i>
     <div class="header">
       En quina fulla vols ficar aquest DNI?
     </div>
+
     <div class="content">
         <div class="ui buttons">
-            {% for p in paginas %}
+            <div class="ui big negative button set-pagina">Sense assignar fulla</div>
+            {% for key in paginas|keys %}
+            {% if key != 'nopage' %}
             <div class="ui big button set-pagina">
-		{% if loop.index0 == 0 %}
-		Sense assignar fulla
-                {% else %}
-		{{ loop.index0 }}
-		{% endif %}
-	    </div>
+                {{ key }}
+            </div>
+            {% endif %}
             {% endfor %}
-            <div class="ui big button set-pagina">{{ paginas|length }}</div>
+            <div class="ui big negative button set-pagina">{{ paginas|length -1}}</div>
         </div>
     </div>
+
     <div class="actions">
       <div class="ui black button cancel">
         Cancel.la

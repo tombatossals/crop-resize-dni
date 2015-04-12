@@ -47,6 +47,9 @@ $idni = intval($_POST['idni']);
 $ndni = $_POST['ndni'];
 $cara = $_POST['cara'];
 
+unlink('cache/' . $idu . "-" . $idni . ".jpg");
+unlink('cache-pdf/' . $idu . "-" . $idni . ".jpg");
+
 $db->updateDni($idu, $idni, $_POST['img'], $ndni, $cara);
 header("Content-Type: application/json");
 echo json_encode(array("success" => true));

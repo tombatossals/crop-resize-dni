@@ -34,6 +34,12 @@ include 'vendor/autoload.php';
 
 Twig_Autoloader::register();
 
+  $admin = 0;
+  if (array_key_exists("admin", $_SESSION)) {
+      $admin = $_SESSION["admin"];
+  }
+
+
 try {
   // specify where to look for templates
   $loader = new Twig_Loader_Filesystem('templates');
@@ -47,7 +53,8 @@ try {
   // set template variables
   // render template
   echo $template->render(array(
-    'image' => $image
+    'image' => $image,
+    'admin' => $admin
   ));
   
 } catch (Exception $e) {

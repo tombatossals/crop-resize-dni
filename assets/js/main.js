@@ -1,5 +1,6 @@
 $(function() {
       var ndni;
+      $('.dropdown').dropdown();
       $('a.page').click(function() {
 	 ndni = $(this).attr('name');
          $('.modal.page').modal('show');
@@ -12,6 +13,7 @@ $(function() {
 	    if ($(this).html() > 0) {
 		pagina = $(this).html()
 	    }
+console.log(pagina, ndni);
 	    $.ajax({
 	      type: 'POST',
 	      url: 'save.php',
@@ -61,7 +63,129 @@ $(function() {
 
 });
 
-angular.module('dnisApp', []).controller('cropController', ['$scope', '$http', function($scope, $http) {
+var app = angular.module('dnisApp', ['angular-spinkit'])
+app.directive('capitalize', function() {
+   return {
+     require: 'ngModel',
+     link: function(scope, element, attrs, modelCtrl) {
+        var capitalize = function(inputValue) {
+           if(inputValue == undefined) inputValue = '';
+           var capitalized = inputValue.toUpperCase();
+           if(capitalized !== inputValue) {
+              modelCtrl.$setViewValue(capitalized);
+              modelCtrl.$render();
+            }         
+            return capitalized;
+         }
+         modelCtrl.$parsers.push(capitalize);
+         capitalize(scope[attrs.ngModel]);  // capitalize initial value
+     }
+   };
+});
+
+app.controller('recercaController', ['$scope', '$http', function($scope, $http) {
+
+	$scope.validDni = true;
+
+	var checkNIF = function(dni){
+	    if(dni.length == 9)
+	    {
+		numbers_DNI = dni.substring(0,8);
+		var isInteger = function(n)
+		{
+		    var intRegex = /^\d+$/;
+		    if(intRegex.test(n)) return true;
+		    return false;
+		}
+		if(!isInteger(numbers_DNI)) return false;
+		letter_DNI = dni.substring(8);
+		var get_letter_DNI = function(dni)
+		{
+		    var table = "TRWAGMYFPDXBNJZSQVHLCKE";
+		    return table.charAt(dni % 23);
+		}
+		letter_calculated = get_letter_DNI(numbers_DNI);
+		if(letter_calculated == letter_DNI) return true;
+	    }
+	 
+	    return false;
+	};
+
+	var checkTR = function(tr) {
+		console.log(tr);
+                if ((tr.length!=10) && (tr.length!=9)) return false;
+                if ((tr.charAt(0).toUpperCase() != "X") && (tr.charAt(0).toUpperCase() != "Y") && (tr.charAt(0).toUpperCase() != "Z")) return false;
+                
+                var leftNum = '0';
+                if (tr.charAt(0).toUpperCase() == "Y") leftNum = '1';
+                
+                if (tr.length==9) {
+                        return checkNIF(leftNum + tr.substring(1,tr.length));
+                } else {
+                        return checkNIF(tr.substring(1,tr.length));
+                }
+	}
+
+	
+	$scope.validateDni = function(dni) {
+		return checkNIF(dni) || checkTR(dni);
+	};
+}]);
+
+app.controller('assignarController', ['$scope', '$http', function($scope, $http) {
+
+	$scope.validDni1 = true;
+	$scope.validDni2 = true;
+	$scope.validDni3 = true;
+	$scope.validDni4 = true;
+	$scope.validDni5 = true;
+
+	var checkNIF = function(dni){
+	    if(dni.length == 9)
+	    {
+		numbers_DNI = dni.substring(0,8);
+		var isInteger = function(n)
+		{
+		    var intRegex = /^\d+$/;
+		    if(intRegex.test(n)) return true;
+		    return false;
+		}
+		if(!isInteger(numbers_DNI)) return false;
+		letter_DNI = dni.substring(8);
+		var get_letter_DNI = function(dni)
+		{
+		    var table = "TRWAGMYFPDXBNJZSQVHLCKE";
+		    return table.charAt(dni % 23);
+		}
+		letter_calculated = get_letter_DNI(numbers_DNI);
+		if(letter_calculated == letter_DNI) return true;
+	    }
+	 
+	    return false;
+	};
+
+	var checkTR = function(tr) {
+		console.log(tr);
+                if ((tr.length!=10) && (tr.length!=9)) return false;
+                if ((tr.charAt(0).toUpperCase() != "X") && (tr.charAt(0).toUpperCase() != "Y") && (tr.charAt(0).toUpperCase() != "Z")) return false;
+                
+                var leftNum = '0';
+                if (tr.charAt(0).toUpperCase() == "Y") leftNum = '1';
+                
+                if (tr.length==9) {
+                        return checkNIF(leftNum + tr.substring(1,tr.length));
+                } else {
+                        return checkNIF(tr.substring(1,tr.length));
+                }
+	}
+
+	
+	$scope.validateDni = function(dni) {
+		return checkNIF(dni) || checkTR(dni);
+	};
+}]);
+
+app.controller('cropController', ['$scope', '$http', function($scope, $http) {
 
     $scope.stepTwo = function() {
 	if (!$scope.validateDni($scope.ndni)) {
@@ -71,7 +195,7 @@ angular.module('dnisApp', []).controller('cropController', ['$scope', '$http', f
         $('.ui.main.image').cropper({
             preview: '.preview',
             aspectRatio: 16/10,
-            autoCropArea: 0.95,
+            autoCropArea: 0.99,
             crop: function(data) {
                 $("#dimensions").html("width: " + parseInt(data.width, 10) + ", height: " + parseInt(data.height, 10));
             }
@@ -109,8 +233,7 @@ angular.module('dnisApp', []).controller('cropController', ['$scope', '$http', f
       return obj;
     };
 
-	$scope.validateDni = function(dni)
-	{
+	var checkNIF = function(dni){
 	    if(dni.length == 9)
 	    {
 		numbers_DNI = dni.substring(0,8);
@@ -132,10 +255,32 @@ angular.module('dnisApp', []).controller('cropController', ['$scope', '$http', f
 	    }
 	 
 	    return false;
+	};
+
+	var checkTR = function(tr) {
+		console.log(tr);
+                if ((tr.length!=10) && (tr.length!=9)) return false;
+                if ((tr.charAt(0).toUpperCase() != "X") && (tr.charAt(0).toUpperCase() != "Y") && (tr.charAt(0).toUpperCase() != "Z")) return false;
+                
+                var leftNum = '0';
+                if (tr.charAt(0).toUpperCase() == "Y") leftNum = '1';
+                
+                if (tr.length==9) {
+                        return checkNIF(leftNum + tr.substring(1,tr.length));
+                } else {
+                        return checkNIF(tr.substring(1,tr.length));
+                }
 	}
+
+	
+	$scope.validateDni = function(dni) {
+		return checkNIF(dni) || checkTR(dni);
+	};
+
 	 
     $scope.save = function() {
 
+        $('.modal.server').modal('show');
         var img = $('.ui.main.image').cropper('getDataURL', 'image/jpeg');
         var cara = $('.ui.button.cara[name="reverso"]').hasClass("active") && 1 || 0;
         var idni = parseLocation(window.location.search)['idni'];

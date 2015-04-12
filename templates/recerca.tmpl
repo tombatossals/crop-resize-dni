@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Gestió de DNI's</title>
+    <meta name="description" content="Gestió de DNI's en Guanyem Castelló">
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- build:css styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="assets/bower_components/semantic/dist/semantic.min.css">
+    <!-- endbower -->
+    <!-- endbuild -->
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:400,700,300&subset=latin,vietnamese' rel='stylesheet' type='text/css'>
+
+    <!-- build:css styles/main.css -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <!-- endbuild -->
+</head>
+<body ng-app="dnisApp" ng-controller="recercaController" ng-cloak>
+    <div class="ui large menu navbar">
+        <div class="left menu">
+            <a href="index.php" class="item">Gestió de DNI's</a>
+        </div>
+        <div class="right menu">
+            {% if admin == 1 %}
+            <a href="admin.php" class="item">Canviar usuari</a>
+            {% endif %}
+            <a href="recerca.php" class="item">Recerca de DNI's</a>
+            <a href="http://guanyemcastello.org" class="item">Guanyem Castelló</a>
+            <div class="item">
+                <a href="?logout" class="ui primary button">Sortir de la sessió</a>
+            </div>
+        </div>
+    </div>
+
+    <h3>Introdueïx el DNI a buscar</h3>
+
+{% if message %}
+<div class="ui {{ color }} message">
+  <i class="close icon"></i>
+  <ul class="list">
+    <li>{{ message }}</li>
+  </ul>
+</div>
+{% endif %}
+
+    <form class="ui attached form" method="POST" action="recerca.php">
+        <div class="two fields">
+            <div class="field"  ng-class="{ error: !validDni }">
+                <div class="ui icon input">
+                    <input autocomplete="off" type="text" id="dni" ng-model="dni" name="dni" capitalize ng-change="validDni = validateDni(dni)" placeholder="Introdueïx el DNI">
+                </div>
+            </div>
+        </div>
+	<br />
+        <div class="two fields">
+            <div class="field">
+		<input type="submit" class="ui positive button" value="Enviar" />
+            </div>
+        </div>
+   </form>
+   <br />
+   {% if res %}
+
+    <div class="ui segment">
+        <div class="ui two column grid">
+            <div class="column">
+                <div class="ui fluid card">
+                    <div class="ui two column grid">
+                        <div class="column">
+                            <div class="ui image">
+                                {% if res[0] %}
+                                <a href="crop.php?idni={{ res[0]['idni'] }}"><img class="ui image" src="image.php?idni={{ res[0]['idni'] }}&thumb=true"></a>
+                                {% else %}
+                                <img class="ui image" src="/assets/img/frontal.jpg">
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="ui image">
+                                {% if res[1] %}
+                                <a href="crop.php?idni={{ res[1].idni }}"><img class="ui image" src="image.php?idni={{ res[1].idni }}&thumb=true"></a>
+                                {% else %}
+                                <img class="ui image" src="/assets/img/reverso.jpg">
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% if res[0].ndni or res[1].ndni %}
+
+                    <div class="content">
+                        {% if res[0].ndni %}
+                        <strong style="font-size: 1.4em;">{{ res[0].ndni }}</strong>
+                        {% else %}
+                        <strong style="font-size: 1.4em;">{{ res[1].ndni }}</strong>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    <div class="extra content">
+                        {% if res|length == 2 and res[0].hoja == 0 and res[1].hoja == 0 %}
+                        <a class="left floated button page" name="{{ res[0].ndni }}" href="">
+                            <i class="block layout icon"></i>
+                            Situar a una fulla
+                        </a>
+			{% else %}
+			Fulla {{ res[0].hoja }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   {% endif %}
+
+<div class="ui modal page transition" style="margin-top: -250px;">
+    <i class="close icon"></i>
+    <div class="header">
+      En quina fulla vols ficar aquest DNI?
+    </div>
+    <div class="content">
+        <div class="ui buttons">
+            <div class="ui big negative button set-pagina">Sense assignar fulla</div>
+            {% for key in paginas|keys %}
+	    {% if key != 'nopage' %}
+            <div class="ui big button set-pagina">
+                {{ key }}
+            </div>
+            {% endif %}
+            {% endfor %}
+            <div class="ui big negative button set-pagina">{{ paginas|length -1}}</div>
+        </div>
+    </div>
+    <div class="actions">
+      <div class="ui black button cancel">
+        Cancel.la
+      </div>
+    </div>
+  </div>
+
+    <script src="assets/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="assets/bower_components/cropper/dist/cropper.min.js"></script>
+    <script src="assets/bower_components/semantic/dist/semantic.min.js"></script>
+    <script src="assets/bower_components/angular/angular.min.js"></script>
+    <script src="assets/bower_components/angular-spinkit/build/angular-spinkit.min.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
